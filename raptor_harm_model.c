@@ -85,7 +85,13 @@ void init_harm_data(char *fname){
         } else {
                 fprintf(stderr, "successfully opened %s\n", fname);
         }
-
+        // 1.991322404872224524e+03       256       256    2.784083797990242193e-01
+        // 0.000000000000000000e+00    1.332215263404262599e-02    3.906250000000000000e-03
+        //   2.000000000000000000e+03    250063    9.375000000000000000e-01    1.333333333333333259e+00
+        //   9.000000000000000222e-01    5.000000000000000000e+01    2.000000000000000000e+00
+        //    2.000000000000000000e+00       100        40       996      2499
+        //  5.421264038700635002e-03         0         0    1.321025567223338859e+00
+        // 4.000000000000000000e+01    2.999999999999999889e-01    0.000000000000000000e+00
         /* get standard HARM header */
         fscanf(fp, "%lf ", &t);
         fscanf(fp, "%d ", &n1);
@@ -150,15 +156,15 @@ void init_harm_data(char *fname){
                 fscanf(fp, "%lf %lf %lf %lf", &x[1], &x[2], &r, &h);
 
                 fscanf(fp, "%lf %lf %lf %lf %lf %lf %lf %lf",
-                       &p[KRHO][i][j][0],
-                       &p[UU][i][j][0],
-                       &p[U1][i][j][0],
-                       &p[U2][i][j][0],
-                       &p[U3][i][j][0],
-                       &p[B1][i][j][0], &p[B2][i][j][0], &p[B3][i][j][0]);
+                       &p[KRHO][i][j][0], // Density
+                       &p[UU][i][j][0], // Internal energy
+                       &p[U1][i][j][0], // Radial Velocity
+                       &p[U2][i][j][0], // Theta Velocity
+                       &p[U3][i][j][0], // Phi Velocity
+                       &p[B1][i][j][0], &p[B2][i][j][0], &p[B3][i][j][0]); // Same for magnetic field
 
-                fscanf(fp, "%lf", &divb);
-                fscanf(fp, "%lf %lf %lf %lf", &Ucon[0], &Ucon[1], &Ucon[2], &Ucon[3]);
+                fscanf(fp, "%lf", &divb); // Divergence of magnetic field
+                fscanf(fp, "%lf %lf %lf %lf", &Ucon[0], &Ucon[1], &Ucon[2], &Ucon[3]); // Contravariant Veloc
                 fscanf(fp, "%lf %lf %lf %lf", &Ucov[0], &Ucov[1], &Ucov[2], &Ucov[3]);
                 fscanf(fp, "%lf %lf %lf %lf", &Bcon[0], &Bcon[1], &Bcon[2], &Bcon[3]);
                 fscanf(fp, "%lf %lf %lf %lf", &Bcov[0], &Bcov[1], &Bcov[2], &Bcov[3]);

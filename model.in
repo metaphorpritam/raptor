@@ -3,10 +3,10 @@ M_UNIT      	(g)		4.e20
 ABSORPTION	(-)		1
 
 IMG_WIDTH   	(pixels)	500
-IMG_HEIGHT  	(pixels)        500
+IMG_HEIGHT  	(pixels)    500
 CAM_SIZE_X  	(Rg)		40
 CAM_SIZE_Y  	(Rg)		40
 FREQS_PER_DEC	(-)		1
-FREQ_MIN	(Hz)		1.e11
+FREQ_MIN	(Hz)		1.e10
 FREQ_MAX	(Hz)		1.e11
 STEPSIZE	(-)		0.03

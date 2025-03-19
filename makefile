@@ -11,7 +11,7 @@ ifeq ($(OPENACC),1)
 	LDFLAGS = -lm -lgsl -lcblas
 else
 	CC = gcc
-	CFLAGS = -fopenmp -std=c99 -I/usr/include -Ofast -Wno-unused-result -fcommomn
+	CFLAGS = -fopenmp -std=c99 -I/usr/include -Ofast -Wno-unused-result -fcommon
 	LDFLAGS = -lm -lgsl -lcblas
 endif
 else
