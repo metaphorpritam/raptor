@@ -146,7 +146,7 @@ void f_geodesic(real *y, real *fvector){
 }
 
 // Integrate the null geodesic defined by "photon_u"
-void integrate_geodesic(int icur,int x, int y, real intensityfield2[maxsize][num_indices],real *frequencies, real **** p,real t,real Xcam[4],real Ucam[4]){
+void integrate_geodesic(int icur,int x, int y, real** intensityfield2,real *frequencies, real **** p,real t,real Xcam[4],real Ucam[4]){
         // Variables
         int f,i, q;
         real t_init = 0.;

@@ -54,6 +54,8 @@ void read_model( char *argv[]){
 
         fprintf(stderr,"Outer R \t= %lf \n\n", RT_OUTER_CUTOFF);
 
+        num_indices = (int)(log10(FREQ_MAX/FREQ_MIN) * FREQS_PER_DEC + 1);
+
         fprintf(stderr,"Observer parameters:\n");
         fprintf(stderr,"IMG_WIDTH \t= %d \n", IMG_WIDTH);
         fprintf(stderr,"IMG_HEIGHT \t= %d \n", IMG_HEIGHT);
@@ -74,7 +76,17 @@ void read_model( char *argv[]){
 
 void calculate_image( real ** intensityfield, real energy_spectrum[num_indices],real frequencies[num_indices]){
 
-        static real intensityfield2[maxsize][num_indices];
+        // Instead of:
+        //static real intensityfield2[maxsize][num_indices];
+
+        // Change to:
+        static real **intensityfield2 = NULL;
+        if (intensityfield2 == NULL) {
+                intensityfield2 = (real **)malloc(maxsize * sizeof(real *));
+                for (int i = 0; i < maxsize; i++) {
+                        intensityfield2[i] = (real *)malloc(num_indices * sizeof(real));
+                }
+        }
 
         #pragma acc data copyin(Xcam[0:4],Ucam[0:4],IMG_WIDTH,IMG_HEIGHT,p[0:NPRIM][0:N1][0:N2][0:N3],frequencies[0:num_indices])
         {
@@ -150,6 +162,12 @@ void calculate_image( real ** intensityfield, real energy_spectrum[num_indices],
                         }
                 }
         }
+
+        // Add this when you're done with intensityfield2
+        for (int i = 0; i < maxsize; i++) {
+                free(intensityfield2[i]);
+        }
+        free(intensityfield2);
 }
 
 void output_files(real ** intensityfield,real energy_spectrum[num_indices],real frequencies[num_indices]){

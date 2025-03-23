@@ -92,6 +92,8 @@
 #include "constants.h"
 #include "parameters.h"
 
+int num_indices = 1;
+
 int main(int argc, char *argv[])
 {
         fprintf(stderr, "WELCOME TO RAPTOR 1.0\n\n");
@@ -118,6 +120,9 @@ int main(int argc, char *argv[])
 
         // INITIALIZE DATA STRUCTURES
         /////////////////////////////
+
+
+        num_indices = (int)(log10(FREQ_MAX/FREQ_MIN) * FREQS_PER_DEC + 1);
 
         real energy_spectrum[num_indices];
         real frequencies[num_indices];

@@ -3,3 +3,5 @@
 *.txt
 RAPTOR
 output*
+multi_freq_images*
+.vscode*

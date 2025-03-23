@@ -46,7 +46,7 @@ real pitch_angle(real *X_u, real *k_d, real *B_u, real *Uplasma_u, real B){
 
 }
 
-real radiative_transfer(real *X_u, real *k_u,real dl_current, real *frequency,int icur,real intensity[maxsize][num_indices], real *tau,real **** p){
+real radiative_transfer(real *X_u, real *k_u,real dl_current, real *frequency,int icur,real** intensity, real *tau,real **** p){
         int IN_VOLUME=0, path_counter;
         real j_nu      = 0.;
         real B, THETA_e, pitch_ang, beta, nu_p, n_e, nu_p2, Bern;

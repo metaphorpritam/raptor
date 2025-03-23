@@ -98,7 +98,7 @@ void f_geodesic(real *y, real *fvector);
 // Integrate the null geodesic specified by alpha and beta, store results
 // in lightpath
 #pragma acc routine (integrate_geodesic)
-void integrate_geodesic(int icur,int x, int y, real intensityfield2[maxsize][num_indices],real *frequencies, real **** p,real t,real Xcam[4],real Ucam[4]);
+void integrate_geodesic(int icur,int x, int y, real** intensityfield2, real *frequencies, real **** p,real t,real Xcam[4],real Ucam[4]);
 
 // METRIC.C
 ///////////
@@ -168,7 +168,7 @@ real pitch_angle(real *X_u, real *k_u, real *B_u, real *Uplasma_u,real B);
 
 // Perform radiative transfer along the ray stored in "lightpath"
 #pragma acc routine (radiative_transfer)
-real radiative_transfer(real *X_u, real *k_u,real dl_current, real *frequency,int icur,real intensity[maxsize][num_indices], real *tau,real **** p);
+real radiative_transfer(real *X_u, real *k_u,real dl_current, real *frequency,int icur,real** intensity, real *tau,real **** p);
 
 // Backward transfer
 real backward_transfer(real alpha, real beta, real *photon_u, int *steps);

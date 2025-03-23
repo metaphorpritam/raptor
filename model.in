@@ -8,5 +8,5 @@ CAM_SIZE_X  	(Rg)		40
 CAM_SIZE_Y  	(Rg)		40
 FREQS_PER_DEC	(-)		1
 FREQ_MIN	(Hz)		1.e10
-FREQ_MAX	(Hz)		1.e11
+FREQ_MAX	(Hz)		1.e14
 STEPSIZE	(-)		0.03
