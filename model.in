@@ -10,3 +10,7 @@ FREQS_PER_DEC	(-)		1
 FREQ_MIN	(Hz)		1.e10
 FREQ_MAX	(Hz)		1.e14
 STEPSIZE	(-)		0.03
+INCLINATION     (-)     60
+R_HIGH        (-)        1.0
+R_LOW         (-)        1.0
+TIME_INIT     (-)        0.0

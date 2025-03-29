@@ -32,15 +32,19 @@ void read_model( char *argv[]){
         fscanf(input, "%s %s %lf", temp, temp2, &FREQ_MIN);
         fscanf(input, "%s %s %lf", temp, temp2, &FREQ_MAX);
         fscanf(input, "%s %s %lf", temp, temp2, &STEPSIZE);
+        fscanf(input, "%s %s %lf", temp, temp2, &INCLINATION);
+        fscanf(input, "%s %s %lf", temp, temp2, &R_HIGH);
+        fscanf(input, "%s %s %lf", temp, temp2, &R_LOW);
+        fscanf(input, "%s %s %lf", temp, temp2, &TIME_INIT);
 
 
         // INPUT AND OUTPUT FILES
         sscanf(argv[2], "%s", GRMHD_FILE); //dump file from HARM
-        sscanf(argv[3], "%lf", &M_UNIT); // 1e19
-        sscanf(argv[4], "%lf", &INCLINATION); //60
-        sscanf(argv[5], "%lf", &R_HIGH); // 1
-        sscanf(argv[6], "%lf", &R_LOW); // 1
-        sscanf(argv[7], "%lf", &TIME_INIT); // 0
+        // sscanf(argv[3], "%lf", &M_UNIT); // 1e19
+        // sscanf(argv[4], "%lf", &INCLINATION); //60
+        // sscanf(argv[5], "%lf", &R_HIGH); // 1
+        // sscanf(argv[6], "%lf", &R_LOW); // 1
+        // sscanf(argv[7], "%lf", &TIME_INIT); // 0
         #pragma acc copyin(R_HIGH,R_LOW)
 
         fprintf(stderr,"Model parameters:\n");
