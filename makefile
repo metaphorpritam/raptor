@@ -30,3 +30,5 @@ harm: $(OBJHARM) makefile
 clean:
 	rm *.o
 	rm RAPTOR
+	rm -rf output/*.dat
+	rm -rf multi_freq_images/*.png
