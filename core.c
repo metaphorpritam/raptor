@@ -58,6 +58,8 @@ void read_model( char *argv[]){
 
         fprintf(stderr,"Outer R \t= %lf \n\n", RT_OUTER_CUTOFF);
 
+        // Calculated twice, once in main.c and once in this function
+        // This is for printing here!
         num_indices = (int)(log10(FREQ_MAX/FREQ_MIN) * FREQS_PER_DEC + 1);
 
         fprintf(stderr,"Observer parameters:\n");
@@ -94,7 +96,7 @@ void calculate_image( real ** intensityfield, real energy_spectrum[num_indices],
 
         #pragma acc data copyin(Xcam[0:4],Ucam[0:4],IMG_WIDTH,IMG_HEIGHT,p[0:NPRIM][0:N1][0:N2][0:N3],frequencies[0:num_indices])
         {
-
+                // No. of batches of pixels to compute
                 int lmax = (int)((real)IMG_HEIGHT*IMG_WIDTH/(real)maxsize + 0.5);
                 if(lmax==0)
                         lmax=1.;
@@ -109,24 +111,27 @@ void calculate_image( real ** intensityfield, real energy_spectrum[num_indices],
                 real diff = clock() - start;
                 clock_t startgpu=clock();
 
+                //int msec = diff *1000/ (CLOCKS_PER_SEC);
                 int msec;
+                // Lower bound and upper bound of the pixel rows to compute in batches
                 int l1,l2;
                 for(int l=0; l<lmax; l++) {
-                        l1 =(int)l*maxsize;
-                        l2 =(int)(l+1)*maxsize;
+                        l1 =(int)l*maxsize; // Setting the lower bound of the current batch
+                        l2 =(int)(l+1)*maxsize; // Setting the upper bound of the current batch
 
                         if(l2 >(IMG_WIDTH)*(IMG_HEIGHT))
-                                l2 =(IMG_WIDTH)*(IMG_HEIGHT);
+                                l2 =(IMG_WIDTH)*(IMG_HEIGHT); //  Setting the upper bound to not exceed image dimensions
 
                         //#pragma acc copyin(intensityfield2[0:1000][0:(num_indices)])
 //#pragma omp parallel for shared(energy_spectrum,frequencies,intensityfield,p) schedule(static,1)
 #pragma acc kernels loop independent copyin(l1,l2) copy(intensityfield2[0:maxsize][0:(num_indices)])
                         for(int i=l1; i < l2; i++) { // For all pixel rows (distributed over threads)...
-                                int y=(int)(i/IMG_WIDTH);
-                                int x=(int)(i%IMG_WIDTH);
+                                int y=(int)(i/IMG_WIDTH); // y position of the pixel
+                                int x=(int)(i%IMG_WIDTH); // x position of the pixel
+                                // Think about representing 2D position in a 1D array
 
                                 // INTEGRATE THIS PIXEL'S GEODESIC AND PERFORM RADIATIVE TRANSFER AT DESIRED FREQUENCIES, STORE RESULTS
-                                int icur=(int)(i-l1);
+                                int icur=(int)(i-l1); // Current pixel with respect to the lower bound of the batch
                                 integrate_geodesic(icur,x,y,intensityfield2,frequencies,p,TIME_INIT,Xcam,Ucam);
                         }
 

@@ -148,12 +148,25 @@ void f_geodesic(real *y, real *fvector){
 // Integrate the null geodesic defined by "photon_u"
 void integrate_geodesic(int icur,int x, int y, real** intensityfield2,real *frequencies, real **** p,real t,real Xcam[4],real Ucam[4]){
         // Variables
+
+        // Loop variables, f for frequencies, i for lightpath & photon,
+        // q for position/velocity/dlambda into lightpath
         int f,i, q;
+        // Not sure? Used in Intialize Photon function, will find our later!
         real t_init = 0.;
+        // For adaptive step size
         real dlambda_adaptive;
+
+        // Number of turns a photon has made around the black hole
+        // Uses the theta coordinate of wave vector to determine if the photon has
+        // turned around (theta_dot < 0) or not (theta_dot > 0)
         int theta_turns = 0;
+        // Previous theta_dot value?? will find out later!
+        // used to determine if the photon has turned
         real thetadot_prev;
+        // X_u and k_u are the position and wave vector of the photon
         real X_u[4], k_u[4];
+        // What does it do? Need to understand alpha nd beta first!!
         real alpha,beta;
         real tau[num_indices];
         for( f = 0; f < num_indices; f++) {
@@ -164,6 +177,9 @@ void integrate_geodesic(int icur,int x, int y, real** intensityfield2,real *freq
         for( i=0; i<15; i++)
                 lightpath[i]=0;
         int steps = 0;
+        // Photon position and wave vector
+        // photon_u[0] - photon_u[3] : Time, r, theta, phi position
+        // photon_u[4] - photon_u[7] : Time, r, theta, phi wave vector
         real photon_u[8];
         for( i=0; i<8; i++)
                 photon_u[i]=0;

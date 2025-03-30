@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
         // INITIALIZE DATA STRUCTURES
         /////////////////////////////
 
-
+        // number of frequencies for raytracing, based on FREQ_MIN, FREQ_MAX, FREQS_PER_DEC from model.in
         num_indices = (int)(log10(FREQ_MAX/FREQ_MIN) * FREQS_PER_DEC + 1);
 
         real energy_spectrum[num_indices];
