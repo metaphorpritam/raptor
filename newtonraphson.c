@@ -8,6 +8,7 @@
 
 // Returns the value of f(Xg2) given some value for Xr2. For the correct Xg2,
 // we have f(Xg2) = 0.
+//  θ = πx2 + 0.5(1 − hslope) sin(2πx2)
 real f_Xg2(real Xg2, real Xr2,real lr,int init){
         return M_PI * Xg2 + 0.5 * (1. - hslope) * sin(2. * M_PI * Xg2) - Xr2;
 }
@@ -46,6 +47,12 @@ real NR_stepU(real Ug2_0,real Ug1, real Ur2, real Xg2, real lr,int init){
 
 // Given the X2 coordinate in RAPTOR's convention, Xr2, we compute and return
 // an estimate for the corresponding coordinate in HARM2D's convention, Xg2.
+/*
+Modified Kerr-Schild (MKS) coordinates. Our numerical integrations are carried out in
+a modified KS coordinates x0, x1, x2, x3, where x0 = t[KS], x3 = φ[KS], and
+r = e^x1 + R0, θ = πx2 + 0.5(1 − hslope) sin(2πx2). The parameter hslope is a measure of the
+slope of the horizon at the equator. The MKS coordinates are related to the standard KS coordinates
+*/
 real Xg2_approx_rand(real Xr2, real lr,int init2){
         real Xg2_current = 0.1; // Initial guess; reasonable b/c Xg2 E [0, 1]
         real Xg2_prev = 1.e-15; // Keeps track of previous estimate to converge

@@ -132,11 +132,15 @@ real inner_product(real *X_u, real *A_u, real *B_u){
 
 // Transform a PHOTON (contravariant position and velocity vectors)
 // from BL to KS coordinates
+// NOTE: This function has multiple temporary variables that are not needed
 void BL_to_KS_u(real *BLphoton_u, real *KSphoton_u){
+        // Construct the transformation matrix(Jacobian) from BL to KS coordinates
         real trans[4][4];
+        // Why do we need this? We are already passing BL and KS photon_u as pointers?
         real X_u[4], U_u[4];
 
         int i, j;
+        // Why do we need this? We are already passing BL and KS photon_u as pointers?
         LOOP_i {
                 X_u[i] = BLphoton_u[i];
                 U_u[i] = BLphoton_u[i+4];

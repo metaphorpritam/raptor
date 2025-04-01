@@ -163,16 +163,22 @@ void integrate_geodesic(int icur,int x, int y, real** intensityfield2,real *freq
         int theta_turns = 0;
         // Previous theta_dot value?? will find out later!
         // used to determine if the photon has turned
+        // NOTE: Is thetadot_prev zero intilaized? Because it isn't in the first run of the RT loop?
         real thetadot_prev;
         // X_u and k_u are the position and wave vector of the photon
         real X_u[4], k_u[4];
         // What does it do? Need to understand alpha nd beta first!!
+        // Impact Param alpha is the perpendicular distance from the axis of black hole to the observer
+        // Impact Param beta is the parallel distance from the axis of black hole to the observer
         real alpha,beta;
+        // Optical depth, will cover it in radiative transfer function
         real tau[num_indices];
         for( f = 0; f < num_indices; f++) {
                 tau[f]=0.0;
                 intensityfield2[icur][f]=0.0;
         }
+        // Store information about the lightpath
+        // -- Position, wave vector, and dlambda
         real lightpath[15];
         for( i=0; i<15; i++)
                 lightpath[i]=0;
@@ -200,6 +206,7 @@ void integrate_geodesic(int icur,int x, int y, real** intensityfield2,real *freq
 #endif
 
         // Create initial ray conditions
+        // we need to understan the IMPACT_CAM properly
 #if (LINEAR_IMPACT_CAM)
         real stepx = CAM_SIZE_X / (real) IMG_WIDTH;
         real stepy = CAM_SIZE_Y / (real) IMG_HEIGHT;
@@ -214,11 +221,20 @@ void integrate_geodesic(int icur,int x, int y, real** intensityfield2,real *freq
         alpha = r_i * cos(theta_i);
         beta  = r_i * sin(theta_i);
 #endif
+        // Initialize the photon position and wave vector
+        // photon_u[0] = t_init; // Time
+        // photon_u[1] = alpha;  // r-coordinate
+        // photon_u[2] = beta;   // theta-coordinate
+        // photon_u[3] = 0.;     // phi-coordinate
+        // photon_u[4] = Ucam[0]; // Time wave vector
+        // photon_u[5] = Ucam[1]; // r wave vector
+        // photon_u[6] = Ucam[2]; // theta wave vector
+        // photon_u[7] = Ucam[3]; // phi wave vector
         initialize_photon(alpha, beta, photon_u, t_init);
 
         // Construct "photon_u"
         LOOP_i {
-                X_u[i] = photon_u[i];
+                X_u[i] = photon_u[i]; // Is this assignment necessary?
         }
 
 #if (GEOD)
@@ -256,6 +272,7 @@ void integrate_geodesic(int icur,int x, int y, real** intensityfield2,real *freq
 #endif
 
                 // Possibly terminate ray to eliminate higher order images
+                // NOTE: thetadot_prev isn't initialized??
                 if (thetadot_prev * photon_u[6] < 0. && steps > 2)
                         theta_turns += 1;
                 thetadot_prev = photon_u[6];

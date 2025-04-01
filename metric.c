@@ -288,7 +288,7 @@ void connection_num_udd(const real X_u[4], real gamma_udd[4][4][4]){
         dg[i][1][2]= dg[i][2][1];
         dg[i][2][2]= (g_dd_p[2][2] - g_dd_m[2][2] )/(2.*delta_num );
         dg[i][3][2]= (g_dd_p[3][2] - g_dd_m[3][2] )/(2.*delta_num );
-     
+
         dg[i][0][3]= dg[i][3][0];
         dg[i][1][3]= dg[i][3][1];
         dg[i][2][3]= dg[i][3][2];
@@ -314,7 +314,7 @@ void connection_num_udd(const real X_u[4], real gamma_udd[4][4][4]){
                     gamma_udd[alpha][3][3] +=  g_uu[alpha][k] * (0.5 * (2.*dg[3][k][3]  - dg[k][3][3]));
 	  }
 	gamma_udd[alpha][1][0]=gamma_udd[alpha][0][1];
- 
+
         gamma_udd[alpha][2][0]=gamma_udd[alpha][0][2];
         gamma_udd[alpha][2][1]=gamma_udd[alpha][1][2];
 
@@ -646,19 +646,26 @@ void connection_udd(const real X_u[4], real gamma[4][4][4]){
 // Ref. Cunningham & Bardeen 1973
 // We want to pick E, L, Q based on impact params alpha, beta
 // Then construct k_u using E, L, Q
+// -- E = energy, L = angular momentum, Q = Carter constant
 // The photons all start at the camera location
 void initialize_photon(real alpha, real beta, real photon_u[8], real t_init){
 
         //    beta *= -1.;
+        // All formulas are in Raptor paper
         real mu0 = cos(INCLINATION / 180. * M_PI);
+        // Position vector of the camera
         real Xcam_u[4] = {t_init, logscale ? log(rcam) : rcam, acos(mu0), 90./180. * M_PI};
+
+        // We need to understand the intermediate caluclations!
         real En = 1.;
         real E2 = En * En;
         real ll = -alpha * sqrt(1. - mu0 * mu0);
         real qq = beta * beta + mu0 * mu0 * (alpha * alpha - 1.);
-        real L1 = ll * En;
-        real Q1 = qq * E2;
-        real k_d[4], k_u[4];
+
+        real L1 = ll * En; // Angular momentum
+        real Q1 = qq * E2; // Carter constant
+        real k_d[4], k_u[4]; // Wave vector, Covariant and Contravariant
+        // Camera position used to initialize 4-vector for wave vector of photon
         real sinc2 = sin(Xcam_u[2]) * sin(Xcam_u[2]);
         real cosc2 = cos(Xcam_u[2]) * cos(Xcam_u[2]);
 
@@ -674,11 +681,13 @@ void initialize_photon(real alpha, real beta, real photon_u[8], real t_init){
         real theta = acos(mu0);
         real sint  = sin(theta);
         real cost  = cos(theta);
+        // Kerr-Schild coordinate parameters
         real sigma = r * r + a * a * cost * cost;
         real delta = r * r + a * a - 2. * r;
         real A_    = (r * r + a * a) * (r * r + a * a) - delta * a * a *
                      sint * sint;
 
+        // Metric Tensor Components
         real g_dd_11 = sigma / delta * rfactor * rfactor;
         real g_uu_00 = -A_ / (sigma * delta);
         real g_uu_03 = -2. * a * r / (sigma * delta);
@@ -686,6 +695,8 @@ void initialize_photon(real alpha, real beta, real photon_u[8], real t_init){
                        (sigma * delta * sint * sint);
         real g_uu_22 = 1. / sigma;
 
+        // Calculate the contravariant wave vector using the metric tensor and
+        // the covariant wave vector
         k_u[0] = g_uu_00 * k_d[0] + g_uu_03 * k_d[3];
         k_u[3] = g_uu_33 * k_d[3] + g_uu_03 * k_d[0];
         k_u[2] = g_uu_22 * k_d[2];
@@ -710,9 +721,17 @@ void initialize_photon(real alpha, real beta, real photon_u[8], real t_init){
         //    LOOP_i printf("\n%+.15e", photon_u[i+4]);
 
         // Convert k_u to the coordinate system that is currently used
+
+        // NOTE: MKS and MBL are logarithmic coordinates, so we need logscale = 1 when used,
+        //      otherwise we need to use the linear coordinates (r, theta, phi) for the metric
+        //      and the photon_u vector.
+        //      Already defined in `parameters.h` LINE: 134
 #if (metric == KS  || metric == MKS)
-        real KSphoton_u[8];
+        // We need to convert the photon_u vector from BL coordinates to KS coordinates
+        real KSphoton_u[8]; // Stores photon_u in Kerr-Schild coordinates
         BL_to_KS_u(photon_u, KSphoton_u);
+        // Reassign photon_u to KS coordinates
+        // Eg: photon_u[0] = KSphoton_u[0];
         LOOP_i {
                 photon_u[i] = KSphoton_u[i];
                 photon_u[i+4] = KSphoton_u[i+4];
@@ -720,8 +739,10 @@ void initialize_photon(real alpha, real beta, real photon_u[8], real t_init){
 #endif
 
 #if (metric == MKS )
-        photon_u[2] = Xg2_approx_rand(photon_u[2],photon_u[1],1); // We only transform theta - r is already exponential and R0 = 0
-        photon_u[6] = Ug2_approx_rand(photon_u[6], photon_u[5],photon_u[2],photon_u[1],1); // We only transform theta - r is already exponential and R0 = 0
+        // We only transform theta - r is already exponential and R0 = 0
+        photon_u[2] = Xg2_approx_rand(photon_u[2],photon_u[1],1); // Uses Newton's method to find theta
+        // We only transform theta - r is already exponential and R0 = 0
+        photon_u[6] = Ug2_approx_rand(photon_u[6], photon_u[5],photon_u[2],photon_u[1],1); // Uses Newton's method to find theta
 #endif
 
 }
